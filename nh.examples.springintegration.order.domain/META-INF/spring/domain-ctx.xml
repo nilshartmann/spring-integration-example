@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:int-ftp="http://www.springframework.org/schema/integration/ftp"
+	xmlns:int-mail="http://www.springframework.org/schema/integration/mail"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration/ftp http://www.springframework.org/schema/integration/ftp/spring-integration-ftp-2.0.xsd
+		http://www.springframework.org/schema/integration/mail http://www.springframework.org/schema/integration/mail/spring-integration-mail-2.0.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<!--  Configure beans from domain Package -->
+	<context:component-scan base-package="nh.virgo.order.domain" />
+	<context:component-scan base-package="nh.virgo.order.queries" />
+	<context:property-placeholder location="classpath:META-INF/spring/domain-ctx.properties"/>
+
+	<!--  Enable Support for @Configurable -->	
+	<context:spring-configured />
+<context:load-time-weaver weaver-class="org.eclipse.equinox.weaving.springweaver.EquinoxAspectsLoadTimeWeaver" aspectj-weaving="on" />	
+
+	<!--  A Logging Channel for monitoring messages via the Log file -->
+	<int:logging-channel-adapter id="logger" level="INFO" log-full-message="true"/>
+
+	<!--  =============================================================== -->
+	<!--  ==            C O M M A N D    P R O C E S S I N G              -->
+	<!--  =============================================================== -->
+	<!--  The Channel for receiving Commands -->
+	<int:channel id="commandChannel">
+		<!--  Enable Logging -->
+		<int:interceptors>
+       		<int:wire-tap channel="logger" />
+   		</int:interceptors>
+	</int:channel>
+	
+	<!-- Forward Commands to CommandHandler bean -->
+	<int:service-activator id="commandHandlerServiceActivator" 
+		input-channel="commandChannel"
+		ref="orderCommandHandler" 
+	/>
+	
+	<!--  =============================================================== -->
+	<!--  ==                  E V E N T   H A N D L I N G                 -->
+	<!--  =============================================================== -->
+	<!-- The EventStore stores the Events and forwards them to the eventPublisher -->
+	<bean id="eventStore" class="nh.virgo.order.framework.eventstore.EventStore">
+		<constructor-arg ref="eventPublisher" />
+	</bean>
+
+	<!-- The EventPublisher-Gateway that will push Events to the eventChannel -->
+	<int:gateway id="eventPublisher"
+		default-request-channel="eventChannelInternal" 
+		service-interface="nh.virgo.order.framework.eventstore.EventPublisher" 
+	/>
+	
+	<!--  The public channel that contains the events published by the EventPublisher -->
+	<int:channel id="eventChannelInternal">
+		<!--  Enable Logging -->
+		<int:interceptors>
+       		<int:wire-tap channel="logger" />
+   		</int:interceptors>
+	</int:channel>
+	
+	<int:header-enricher input-channel="eventChannelInternal" output-channel="eventChannel">
+		<int:header name="eventName" expression="payload.eventName"/>
+	</int:header-enricher>
+	
+	<int:publish-subscribe-channel id="eventChannel">
+		<!--  Enable Logging -->
+		<int:interceptors>
+       		<int:wire-tap channel="logger" />
+   		</int:interceptors>
+	</int:publish-subscribe-channel>
+
+	<int:service-activator id="simpleEventActivator"
+		input-channel="eventChannel"
+		method="onEvent">
+		<bean id="simpleEventListener" class="nh.virgo.order.domain.SimpleEventListener" />
+	</int:service-activator>
+	
+	<!-- 
+	<osgi:service interface="org.springframework.integration.core.SubscribableChannel" ref="commandChannel" >
+		<osgi:service-properties>
+			<entry key="channelName" value="commandChannel" />
+		</osgi:service-properties>
+	</osgi:service>
+	
+	<osgi:service interface="org.springframework.integration.core.SubscribableChannel" ref="eventChannel" >
+		<osgi:service-properties>
+			<entry key="channelName" value="eventChannel" />
+		</osgi:service-properties>
+	</osgi:service>
+	 -->
+
+	<!--  =============================================================== -->
+	<!--  ==              Q U E R I E S                                   -->
+	<!--  =============================================================== -->
+	<int:channel id="queryChannel">
+		<int:interceptors>
+       		<int:wire-tap channel="logger" />
+   		</int:interceptors>
+	</int:channel>
+	<int:channel id="queryResultChannel" >
+		<int:interceptors>
+       		<int:wire-tap channel="logger" />
+   		</int:interceptors>
+	</int:channel>
+
+	<int:service-activator id="queryServiceActivator"
+	input-channel="queryChannel"
+	ref="orderQueriesImpl" />
+
+<!--  
+	<osgi:service interface="org.springframework.integration.core.SubscribableChannel" ref="queryChannel" >
+		<osgi:service-properties>
+			<entry key="channelName" value="queryChannel" />
+		</osgi:service-properties>
+	</osgi:service>
+	<osgi:service interface="org.springframework.integration.core.SubscribableChannel" ref="queryResultChannel" >
+		<osgi:service-properties>
+			<entry key="channelName" value="queryResultChannel" />
+		</osgi:service-properties>
+	</osgi:service>	
+	-->
+
+
+	<!--  =============================================================== -->
+	<!--  ==              S H I P P I N G   E V E N T S                   -->
+	<!--  =============================================================== -->
+	
+	
+	<int:chain input-channel="eventChannel" output-channel="shippingRequestChannel">
+		<!--  Process only OrderSubmittedEvents -->
+		<int:filter expression="headers['eventName']=='OrderSubmittedEvent'" />
+		
+		<int:header-enricher>
+			<int:header name="submittedOrderId" expression="payload.submittedOrderIdentifier.id" />
+		</int:header-enricher>
+		
+		<!--  Transform Event to a ShippingRequest -->
+		<int:transformer ref="orderSubmittedEventTransformer" />
+	</int:chain>
+	
+	<int:channel id="shippingRequestChannel" />
+	
+	<!-- A Set -->
+	<bean id="ftpSessionFactory" 
+	class="org.springframework.integration.ftp.session.DefaultFtpSessionFactory">
+		<property name="host" value="localhost"/>
+		<property name="port" value="21"/>
+		<property name="username" value="admin"/>
+		<property name="password" value="admin"/>
+		<property name="clientMode" value="0"/>
+		<property name="fileType" value="2"/>
+	</bean>
+	
+	<!--  Put the Shipping Request to the Shipping Company's FTP-Server  -->
+	<int-ftp:outbound-channel-adapter id="ftpOutbound"
+				channel="shippingRequestChannel" 
+				session-factory="ftpSessionFactory"
+				remote-directory="/"
+				remote-filename-generator-expression="'/order-'+headers['submittedOrderId']+'-'+new java.util.Date().getTime()+'.txt'"
+				charset="UTF-8" />
+
+	<!--  =============================================================== -->
+	<!--  ==          C O N F I R M A T I O N   E - M A I L S             -->
+	<!--  =============================================================== -->
+	<!-- Configure Spring MailSender that will be used to send confirmation E-Mails to Customer -->
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="${mail.host}" />
+		<property name="port" value="${mail.port}" />
+		<property name="protocol" value="${mail.protocol}" />
+		<property name="username" value="${mail.username}" />
+		<property name="password" value="${mail.password}" />
+		<property name="javaMailProperties">
+			<!-- (following properties needed for gmail) -->
+			<props>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+				<prop key="mail.smtp.quitwait">false</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<int:chain input-channel="eventChannel" output-channel="orderSubmittedConfirmationChannel">
+		<!--  Process only OrderSubmittedEvents -->
+		<int:filter expression="headers['eventName']=='OrderSubmittedEvent'" />
+		
+		<!--  "Transform" Event to Order -->
+		<int:transformer ref="toOrderTransformer" />
+		<!--  Process only Orders where Customer is able to receive emails -->
+		<int:filter expression="payload.isCustomerAbleToReceiveEmails()" />
+
+		<!--  Set E-Mail Headers -->
+		<int:header-enricher>
+			<int:header name="mail_to" expression="payload.customerName()+' &lt;' + payload.customerEmail() + '&gt;'" />
+			<int:header name="mail_from" value="nils@nilshartmann.net" />
+			<int:header name="mail_subject" value="Your order has been submitted" />
+		</int:header-enricher>
+		
+		<!--  Transform Order to E-Mail -->	
+		<int:transformer ref="orderSubmittedConfirmationEMailTransformer" />
+	</int:chain>
+
+	
+	<int:channel id="orderSubmittedConfirmationChannel" />
+	<int-mail:outbound-channel-adapter mail-sender="mailSender" channel="orderSubmittedConfirmationChannel" />
+		
+</beans>

@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Domain
+Bundle-SymbolicName: nh.examples.springintegration.order.framework.domain
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: com.google.common.base;version="1.7.0",
+ com.google.common.collect,
+ javax.persistence,
+ org.slf4j,
+ org.springframework.beans.factory.annotation,
+ org.springframework.transaction.annotation,
+ org.springframework.util
+Export-Package: nh.virgo.order.framework.domain,
+ nh.virgo.order.framework.domain.commands,
+ nh.virgo.order.framework.domain.events,
+ nh.virgo.order.framework.eventstore

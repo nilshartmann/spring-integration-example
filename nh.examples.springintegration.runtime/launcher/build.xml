@@ -1,0 +1,22 @@
+<project name="nh.examples.springintegration.runtime-ftplauncher" default="start-ftp-server">
+
+	<property name="ftp.data" value="${basedir}/../data/ftp/home" />
+	<property name="ftp.home" value="${basedir}/../apps/apache-ftpserver" />
+	
+	<target name="start-ftp-server">
+		
+		<echo>Creating FTP home directory '${ftp.data}'</echo>
+		<mkdir dir="${ftp.data}" />
+		
+		<java classname="org.apache.ftpserver.main.CommandLine"
+			fork="true" dir="${ftp.home}">
+			<arg value="res/conf/ftpd-typical.xml"/>
+			<classpath>
+				<pathelement path="${ftp.home}/common/classes"/>
+				<fileset dir="${ftp.home}/common/lib" includes="*.jar" />
+			</classpath>
+		</java>
+		
+	</target>
+	
+</project>

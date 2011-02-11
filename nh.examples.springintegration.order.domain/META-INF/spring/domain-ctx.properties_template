@@ -1,0 +1,8 @@
+# Rename this file to 'domain-ctx.properties' and adjust it according to your needs
+
+# Configure mail
+mail.host=smtp.gmail.com
+mail.port=587
+mail.protocol=smtp
+mail.username=myemail@googlemail.com
+mail.password=mypassword
