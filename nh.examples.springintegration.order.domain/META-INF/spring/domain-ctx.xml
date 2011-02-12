@@ -19,7 +19,7 @@
 
 	<!--  Enable Support for @Configurable -->	
 	<context:spring-configured />
-<context:load-time-weaver weaver-class="org.eclipse.equinox.weaving.springweaver.EquinoxAspectsLoadTimeWeaver" aspectj-weaving="on" />	
+	<context:load-time-weaver weaver-class="org.eclipse.equinox.weaving.springweaver.EquinoxAspectsLoadTimeWeaver" aspectj-weaving="on" />	
 
 	<!--  A Logging Channel for monitoring messages via the Log file -->
 	<int:logging-channel-adapter id="logger" level="INFO" log-full-message="true"/>
