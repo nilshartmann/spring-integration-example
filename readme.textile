@@ -1,12 +1,94 @@
-h1. Spring integration OSGi examples
+h1. About this example
 
-This is an example demonstrating some features of "Spring Integration"://http://www.springsource.org/spring-integration in combination with OSGi.
+This example demonstrates *Spring Integration* features running in an OSGi environment.
 
-!chains.png!
+!http://nilshartmann.net/spring-integration-example/chains.png!
 
-Note that this is work-in-progress.
 
-h1. Documentation
+h1. Environment
 
-Some documentation can be found in the "nh.examples.springintegration.runtime" project.
+The example uses the following frameworks:
 
+* Equinox 3.6.1
+* Spring 3.0.5
+* Spring Integration 2.0.1
+* Spring Dynamic Modules (DM) 2.0.0.M1
+* EclipseLink 2.x
+
+h1. Running the example
+
+This section describes how to run the examples directly from Eclipse.
+
+h2. Setup the Eclipse workspace
+
+# Clone the Git-Repository to your local harddisc
+# Import all projects into your Eclipse installation (File -> Import -> Existing projects...)
+# Set the target platform to make projects compile: Open *order.target* from the module *target.platform* using the "Target Editor". Click on "Set as Target Platform". Now all projects should compile. Your ready to execute the example.
+
+h2. Starting the dependent application
+
+The application depends on a running JMS server, a database, a FTP and a Mail server. The former three are included inside the project *nh.examples.springintegration.runtime*. Before you start the example application you have to launch the servers. For each there is a prepared launch configuration available from the Launch Configuration menu (JMS server and database):
+
+!http://nilshartmann.net/spring-integration-example/howto/launch-config.png!
+
+The FTP server can be started via an External Tools launch configuration:
+
+!http://nilshartmann.net/spring-integration-example/howto/external-launch-config.png!
+
+After you've started the server processes you have to configure the mail server. 
+
+h3. Configuring the Mail server 
+
+The example server needs a mail server. You can configure an existing server in the file *shipping-ctx.properties_template* in *nh.examples.springintegration.order.shipping/META-INF/spring*. Please rename (or copy) this file to *shipping-ctx.properties* and set you E-Mail server host, user, password etc.
+
+h2. Start the server
+
+Now it's time to start the OSGi-based server. You can launch it with the *Order OSGi Server* Launch Configuration from the Run menu. It will start Equinox and deploy all needed bundles from the target platform and from the workspace.
+
+When the server has been started please make sure that all required Spring application contexts have been successfully configured. To do so, execute the command *lc* on the Equinox console:
+
+!http://nilshartmann.net/spring-integration-example/howto/equinox-lc.png!
+
+You should see four application contexts (resp their containing bundles) that are in state REFRESHED.
+(Note that the state displayed ("REFRESHED") is the state of an *application context*, it's not the *bundle* state!)
+
+h2. Run the client
+
+The example comes with a very simple swing client that can be used to view, create, edit and submit orders.
+
+To start the client use the *Swing Client* launch configuration. Two windows are displayed:
+* The *Event Browser*. This window display all (business) events that are published on the server. 
+* The *Order Overview*. In this window all orders that exist in the server's database are displayed.
+
+The following screenshot shows an example:
+!http://nilshartmann.net/spring-integration-example/howto/client-1.png!
+
+
+Note that the whole communication between client and server is done via JMS.
+
+h3. Add a new Order
+
+To add a new Order press the *Add order* button in the *Order overview* window. In the next screen
+you have to enter a (fictional) customer name and an e-mail (note that the e-mail-address you enter is used to send a real email, so you should either use your own e-mail to prevent spaming someone else).
+
+After pressing OK a JMS request is sent to the server and your Order is created. You can see a confirmation in the Event Viewer, where a new *OrderCreatedEvent* should be shown. 
+
+h3. Add something to your Order
+
+Now you can edit your order by opening the context menu with a right click on a line in the table. From the context menu choose *Edit order*:
+!http://nilshartmann.net/spring-integration-example/howto/edit-order.png!
+
+A new window opens that allows you to add Line items to your order by pressing "Add Line Item". You can fill in whatever you want in the dialog that opens:
+
+!http://nilshartmann.net/spring-integration-example/howto/add-line-item.png!
+Note that after you click OK the *Edit order*-window does not get updated (thats not implemented yet). But you can see that something happend on the server by inspecting the *Event Browser* where *LineItemAdded*-events should have been received.
+
+h3. Submitting your Order
+
+Now submit your order by choosing *Submit order* from the Overview's context menu. An appropriate *SubmitOrderCommand* is sent to the server, where your Order gets "processed". Processing the order
+leads to an Event (*OrderSubmitted*) that is received by a fictional "shipping" component. This component:
+* send a confirmation e-mail to your e-mail account
+* put a "shipping request" on the ftp server (have a look at nh.examples.springintegration.runtime/data/ftp/home)
+
+Now press "Refresh" in the *Order Overview* window. You order should now have the state *SUBMITTED*.
+You successfully have processed your first order ;-)
