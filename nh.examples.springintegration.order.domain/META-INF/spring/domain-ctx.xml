@@ -2,11 +2,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xmlns:int="http://www.springframework.org/schema/integration"
 	xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:int-ftp="http://www.springframework.org/schema/integration/ftp"
 	xmlns:int-mail="http://www.springframework.org/schema/integration/mail"
-	xsi:schemaLocation="http://www.springframework.org/schema/integration/ftp http://www.springframework.org/schema/integration/ftp/spring-integration-ftp-2.0.xsd
+	xsi:schemaLocation="http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-2.0-m1.xsd
+		http://www.springframework.org/schema/integration/ftp http://www.springframework.org/schema/integration/ftp/spring-integration-ftp-2.0.xsd
 		http://www.springframework.org/schema/integration/mail http://www.springframework.org/schema/integration/mail/spring-integration-mail-2.0.xsd
 		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.0.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -14,7 +16,6 @@
 
 	<!--  Configure beans from domain Package -->
 	<context:component-scan base-package="nh.virgo.order.domain" />
-	<context:component-scan base-package="nh.virgo.order.queries" />
 	<context:property-placeholder location="classpath:META-INF/spring/domain-ctx.properties"/>
 
 	<!--  Enable Support for @Configurable -->	
@@ -23,6 +24,8 @@
 
 	<!--  A Logging Channel for monitoring messages via the Log file -->
 	<int:logging-channel-adapter id="logger" level="INFO" log-full-message="true"/>
+
+	<osgi:service ref="orderRepository" interface="nh.virgo.order.domain.OrderRepository"/>
 
 	<!--  =============================================================== -->
 	<!--  ==            C O M M A N D    P R O C E S S I N G              -->
@@ -94,23 +97,6 @@
 	</osgi:service>
 	 -->
 
-	<!--  =============================================================== -->
-	<!--  ==              Q U E R I E S                                   -->
-	<!--  =============================================================== -->
-	<int:channel id="queryChannel">
-		<int:interceptors>
-       		<int:wire-tap channel="logger" />
-   		</int:interceptors>
-	</int:channel>
-	<int:channel id="queryResultChannel" >
-		<int:interceptors>
-       		<int:wire-tap channel="logger" />
-   		</int:interceptors>
-	</int:channel>
-
-	<int:service-activator id="queryServiceActivator"
-	input-channel="queryChannel"
-	ref="orderQueriesImpl" />
 
 <!--  
 	<osgi:service interface="org.springframework.integration.core.SubscribableChannel" ref="queryChannel" >

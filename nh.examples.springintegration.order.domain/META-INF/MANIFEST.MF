@@ -6,13 +6,16 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.google.common.base;version="1.7.0",
  com.google.common.collect,
+ javax.jms;version="1.1.0",
  nh.virgo.order.framework.domain,
  nh.virgo.order.framework.domain.commands,
  nh.virgo.order.framework.domain.events,
  nh.virgo.order.framework.eventstore,
  nh.virgo.order.utils,
+ org.apache.commons.logging;version="1.1.1",
  org.eclipse.equinox.weaving.springweaver,
  org.eclipse.persistence.indirection;version="2.2.0.v20110202-r8913",
+ org.osgi.framework;version="1.5.0",
  org.slf4j,
  org.springframework.beans.factory.annotation,
  org.springframework.stereotype;version="3.0.5.RELEASE",
@@ -41,3 +44,4 @@ Require-Bundle: com.springsource.org.aspectj.weaver;bundle-version="1.6.6",
  com.springsource.javax.activation;bundle-version="1.1.0"
 Bundle-ClassPath: bin/,
  .
+Export-Package: nh.virgo.order.domain

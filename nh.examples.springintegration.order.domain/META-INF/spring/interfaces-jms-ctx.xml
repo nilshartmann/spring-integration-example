@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:int="http://www.springframework.org/schema/integration"
 	xmlns:int-jms="http://www.springframework.org/schema/integration/jms"
 	xmlns:p="http://www.springframework.org/schema/p"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	xsi:schemaLocation="http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-2.0-m1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.0.xsd
 		http://www.springframework.org/schema/integration/jms http://www.springframework.org/schema/integration/jms/spring-integration-jms-2.0.xsd">
@@ -18,16 +20,8 @@
 	<!--                        A C T I V E   M Q                         -->
 	<!--  =============================================================== -->
 	
-	<!--  ConnectionFactory to ActiveMq -->
-	<bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
-		<property name="targetConnectionFactory">
-			<bean class="org.apache.activemq.ActiveMQConnectionFactory">
-				<property name="brokerURL" value="tcp://localhost:61616"/>		
-			</bean>
-		</property>
-		<property name="sessionCacheSize" value="10"/>
-		<property name="cacheProducers" value="false"/>
-	</bean>
+	<osgi:reference id="connectionFactory" interface="javax.jms.ConnectionFactory" />
+
 
 	<!-- The requestQueue that contains commands that will be forwarded to a CommandHandler -->
 	<bean id="requestQueue" class="org.apache.activemq.command.ActiveMQQueue">
@@ -39,12 +33,6 @@
 		<constructor-arg value="nh.virgo.order.eventTopic"/>
 	</bean>	
 	
-	<bean id="queryQueue" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="nh.virgo.order.orderQueries"/>
-	</bean>
-	<bean id="queryResultQueue" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="nh.virgo.order.orderQueryResult"/>
-	</bean>
 	
 	
 	<!--  The message converter that converts JMS messages from XML to objects and vice versa -->
@@ -81,20 +69,6 @@
 		destination="eventTopic"
 		message-converter="messageConverter" />
 	
-	<!--  =============================================================== -->
-	<!--                     Q U E R Y   F A C A D E                      -->
-	<!--  =============================================================== -->
-	<!-- 
-	<osgi:reference id="queryChannel" 
-		interface="org.springframework.integration.core.SubscribableChannel" 
-		filter="(channelName=queryChannel)" />
- -->
-
-	<int-jms:inbound-gateway 
-		request-destination="queryQueue" 
-		request-channel="queryChannel"
-		message-converter="messageConverter" 
-	/> 
 		
 	
 
