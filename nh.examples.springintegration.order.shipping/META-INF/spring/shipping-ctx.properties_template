@@ -1,4 +1,4 @@
-# Rename this file to 'domain-ctx.properties' and adjust it according to your needs
+# Rename this file to 'shipping-ctx.properties' and adjust it according to your needs
 
 # Configure mail
 mail.host=smtp.gmail.com
