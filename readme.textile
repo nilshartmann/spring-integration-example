@@ -1,0 +1,5 @@
+h1. Spring integration OSGi examples
+
+This is an example demonstrating some features of "Spring Integration"://http://www.springsource.org/spring-integration in combination with OSGi.
+
+Note that this is work-in-progress.
