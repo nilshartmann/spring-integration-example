@@ -16,7 +16,6 @@
 
 	<!--  Configure beans from domain Package -->
 	<context:component-scan base-package="nh.virgo.order.domain" />
-	<context:property-placeholder location="classpath:META-INF/spring/domain-ctx.properties"/>
 
 	<!--  Enable Support for @Configurable -->	
 	<context:spring-configured />
@@ -89,13 +88,13 @@
 			<entry key="channelName" value="commandChannel" />
 		</osgi:service-properties>
 	</osgi:service>
-	
+		 -->
 	<osgi:service interface="org.springframework.integration.core.SubscribableChannel" ref="eventChannel" >
 		<osgi:service-properties>
 			<entry key="channelName" value="eventChannel" />
 		</osgi:service-properties>
 	</osgi:service>
-	 -->
+
 
 
 <!--  
@@ -112,86 +111,5 @@
 	-->
 
 
-	<!--  =============================================================== -->
-	<!--  ==              S H I P P I N G   E V E N T S                   -->
-	<!--  =============================================================== -->
-	
-	
-	<int:chain input-channel="eventChannel" output-channel="shippingRequestChannel">
-		<!--  Process only OrderSubmittedEvents -->
-		<int:filter expression="headers['eventName']=='OrderSubmittedEvent'" />
-		
-		<int:header-enricher>
-			<int:header name="submittedOrderId" expression="payload.submittedOrderIdentifier.id" />
-		</int:header-enricher>
-		
-		<!--  Transform Event to a ShippingRequest -->
-		<int:transformer ref="orderSubmittedEventTransformer" />
-	</int:chain>
-	
-	<int:channel id="shippingRequestChannel" />
-	
-	<!-- A Set -->
-	<bean id="ftpSessionFactory" 
-	class="org.springframework.integration.ftp.session.DefaultFtpSessionFactory">
-		<property name="host" value="localhost"/>
-		<property name="port" value="21"/>
-		<property name="username" value="admin"/>
-		<property name="password" value="admin"/>
-		<property name="clientMode" value="0"/>
-		<property name="fileType" value="2"/>
-	</bean>
-	
-	<!--  Put the Shipping Request to the Shipping Company's FTP-Server  -->
-	<int-ftp:outbound-channel-adapter id="ftpOutbound"
-				channel="shippingRequestChannel" 
-				session-factory="ftpSessionFactory"
-				remote-directory="/"
-				remote-filename-generator-expression="'/order-'+headers['submittedOrderId']+'-'+new java.util.Date().getTime()+'.txt'"
-				charset="UTF-8" />
-
-	<!--  =============================================================== -->
-	<!--  ==          C O N F I R M A T I O N   E - M A I L S             -->
-	<!--  =============================================================== -->
-	<!-- Configure Spring MailSender that will be used to send confirmation E-Mails to Customer -->
-	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-		<property name="host" value="${mail.host}" />
-		<property name="port" value="${mail.port}" />
-		<property name="protocol" value="${mail.protocol}" />
-		<property name="username" value="${mail.username}" />
-		<property name="password" value="${mail.password}" />
-		<property name="javaMailProperties">
-			<!-- (following properties needed for gmail) -->
-			<props>
-				<prop key="mail.smtp.auth">true</prop>
-				<prop key="mail.smtp.starttls.enable">true</prop>
-				<prop key="mail.smtp.quitwait">false</prop>
-			</props>
-		</property>
-	</bean>
-	
-	<int:chain input-channel="eventChannel" output-channel="orderSubmittedConfirmationChannel">
-		<!--  Process only OrderSubmittedEvents -->
-		<int:filter expression="headers['eventName']=='OrderSubmittedEvent'" />
-		
-		<!--  "Transform" Event to Order -->
-		<int:transformer ref="toOrderTransformer" />
-		<!--  Process only Orders where Customer is able to receive emails -->
-		<int:filter expression="payload.isCustomerAbleToReceiveEmails()" />
-
-		<!--  Set E-Mail Headers -->
-		<int:header-enricher>
-			<int:header name="mail_to" expression="payload.customerName()+' &lt;' + payload.customerEmail() + '&gt;'" />
-			<int:header name="mail_from" value="nils@nilshartmann.net" />
-			<int:header name="mail_subject" value="Your order has been submitted" />
-		</int:header-enricher>
-		
-		<!--  Transform Order to E-Mail -->	
-		<int:transformer ref="orderSubmittedConfirmationEMailTransformer" />
-	</int:chain>
-
-	
-	<int:channel id="orderSubmittedConfirmationChannel" />
-	<int-mail:outbound-channel-adapter mail-sender="mailSender" channel="orderSubmittedConfirmationChannel" />
 		
 </beans>
