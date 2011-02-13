@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="libs/substance-6.0.jar"/>
+	<classpathentry kind="lib" path="libs/trident-1.2.jar"/>
+	<classpathentry kind="lib" path="libs/laf-widget-5.0.jar"/>
+	<classpathentry kind="lib" path="libs/laf-plugin-1.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/nh.examples.springintegration.order.domain"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/nh.examples.springintegration.order.queries"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/nh.examples.springintegration.order.utils"/>
+	<classpathentry kind="lib" path="/target.platform/bundles/guava/com.google.guava_1.7.0.jar"/>
+	<classpathentry kind="lib" path="/target.platform/bundles/spring-integration/spring-integration-core-2.0.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/target.platform/bundles/spring-integration/spring-integration-jms-2.0.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/target.platform/bundles/springframework/org.springframework.beans-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/target.platform/bundles/springframework/org.springframework.context-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/target.platform/bundles/springframework/org.springframework.core-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/target.platform/bundles/springframework/org.springframework.jms-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/target.platform/bundles/apache/com.springsource.org.apache.activemq-5.2.0.jar"/>
+	<classpathentry kind="lib" path="/target.platform/bundles/apache/com.springsource.org.apache.commons.dbcp-1.2.2.osgi.jar"/>
+	<classpathentry kind="lib" path="/target.platform/bundles/apache/com.springsource.org.apache.commons.pool-1.4.0.jar"/>
+	<classpathentry kind="lib" path="/target.platform/bundles/springsource/com.springsource.org.apache.log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="/target.platform/bundles/springsource/com.springsource.slf4j.api-1.5.6.jar"/>
+	<classpathentry kind="lib" path="/target.platform/bundles/springsource/com.springsource.slf4j.log4j-1.5.6.jar"/>
+	<classpathentry kind="lib" path="/target.platform/bundles/springsource/com.springsource.slf4j.org.apache.commons.logging-1.5.6.jar"/>
+	<classpathentry kind="lib" path="/target.platform/bundles/xstream/com.springsource.com.thoughtworks.xstream-1.3.0.jar"/>
+	<classpathentry kind="lib" path="/target.platform/bundles/xstream/com.springsource.org.xmlpull-1.1.3.4-O.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/nh.examples.springintegration.order.framework.domain"/>
+	<classpathentry kind="lib" path="/target.platform/bundles/springframework/org.springframework.asm-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/target.platform/bundles/javax/com.springsource.javax.management.j2ee-1.0.1.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
