@@ -25,18 +25,18 @@
 
 	<!-- The requestQueue that contains commands that will be forwarded to a CommandHandler -->
 	<bean id="requestQueue" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="nh.virgo.order.commandRequests"/>
+		<constructor-arg value="nh.examples.springintegration.order.commandRequests"/>
 	</bean>
 	
 	<!-- A Topic that is used to publish Events -->
 	<bean id="eventTopic" class="org.apache.activemq.command.ActiveMQTopic">
-		<constructor-arg value="nh.virgo.order.eventTopic"/>
+		<constructor-arg value="nh.examples.springintegration.order.eventTopic"/>
 	</bean>	
 	
 	
 	
 	<!--  The message converter that converts JMS messages from XML to objects and vice versa -->
-	<bean id="messageConverter" class="nh.virgo.order.utils.XmlJmsMessageConverter" />
+	<bean id="messageConverter" class="nh.examples.springintegration.order.utils.XmlJmsMessageConverter" />
 
 	<!--  =============================================================== -->
 	<!--                     C O M M A N D   B U S                        -->

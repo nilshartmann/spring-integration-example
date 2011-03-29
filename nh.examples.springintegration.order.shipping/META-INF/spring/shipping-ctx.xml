@@ -16,10 +16,10 @@
 		http://www.springframework.org/schema/integration/mail http://www.springframework.org/schema/integration/mail/spring-integration-mail-2.0.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-	<context:component-scan base-package="nh.virgo.order.domain.shipping" />
+	<context:component-scan base-package="nh.examples.springintegration.order.shipping" />
 	<context:property-placeholder location="classpath:META-INF/spring/shipping-ctx.properties"/>
 	
-	<osgi:reference id="orderRepository" interface="nh.virgo.order.domain.OrderRepository" />
+	<osgi:reference id="orderRepository" interface="nh.examples.springintegration.order.domain.OrderRepository" />
 		<!--  =============================================================== -->
 	<!--  ==              S H I P P I N G   E V E N T S                   -->
 	<!--  =============================================================== -->

@@ -34,11 +34,11 @@
 	<!--  =============================================================== -->
 	<!-- The requestQueue that contains commands that will be forwarded to a CommandHandler -->
 	<bean id="queryQueue" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="nh.virgo.order.queries"/>
+		<constructor-arg value="nh.examples.springintegration.order.queries"/>
 	</bean>
 	
 	<bean id="queryResultQueue" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="nh.virgo.order.queryResults"/>
+		<constructor-arg value="nh.examples.springintegration.order.queryResults"/>
 	</bean>
 
 
@@ -50,7 +50,7 @@
 	
 	<int:gateway id="orderQueryServiceGateway"
 		default-request-channel="orderQueryChannel"
-		service-interface="nh.virgo.order.queries.OrderQueryService"
+		service-interface="nh.examples.springintegration.order.queries.OrderQueryService"
 	/>
 
 	<int-jms:outbound-gateway request-channel="orderQueryChannel" request-destination="queryQueue" 
@@ -64,7 +64,7 @@
 	
 	<int:channel id="incomingQueries" />
 
-	<bean id="orderQueryServiceImpl" class="nh.virgo.order.queries.internal.OrderQueryServiceImpl" />
+	<bean id="orderQueryServiceImpl" class="nh.examples.springintegration.order.queries.internal.OrderQueryServiceImpl" />
 	
 	<int:service-activator input-channel="incomingQueries"
 		ref="orderQueryServiceImpl" />

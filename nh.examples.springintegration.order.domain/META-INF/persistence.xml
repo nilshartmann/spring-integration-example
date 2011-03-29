@@ -4,8 +4,8 @@
 		version="1.0">
 
 	<persistence-unit name="Order" transaction-type="RESOURCE_LOCAL">
-		<class>nh.virgo.order.domain.Order</class>
-		<class>nh.virgo.order.domain.LineItem</class>
+		<class>nh.examples.springintegration.order.domain.Order</class>
+		<class>nh.examples.springintegration.order.domain.LineItem</class>
 		<properties>
 			<property name="eclipselink.ddl-generation" value="create-tables" />
 			<property name="eclipselink.ddl-generation.output-mode"	value="database" />

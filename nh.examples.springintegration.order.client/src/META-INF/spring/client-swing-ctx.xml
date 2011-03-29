@@ -10,7 +10,7 @@
 		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.0.xsd
 		http://www.springframework.org/schema/integration/jms http://www.springframework.org/schema/integration/jms/spring-integration-jms-2.0.xsd">
 	
-	<context:component-scan base-package="nh.virgo.order.client.swing" />
+	<context:component-scan base-package="nh.examples.springintegration.order.client" />
 
 	<!--  =============================================================== -->
 	<!--                        A C T I V E   M Q                         -->
@@ -31,19 +31,19 @@
 	<!--  =============================================================== -->
 	<!-- The requestQueue that contains commands that will be forwarded to a CommandHandler -->
 	<bean id="commandBusQueue" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="nh.virgo.order.commandRequests"/>
+		<constructor-arg value="nh.examples.springintegration.order.commandRequests"/>
 	</bean>
 
 	<!-- A Topic to read Events from -->
 	<bean id="eventTopic" class="org.apache.activemq.command.ActiveMQTopic">
-		<constructor-arg value="nh.virgo.order.eventTopic"/>
+		<constructor-arg value="nh.examples.springintegration.order.eventTopic"/>
 	</bean>	
 	
 	<bean id="queryQueue" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="nh.virgo.order.orderQueries"/>
+		<constructor-arg value="nh.examples.springintegration.order.orderQueries"/>
 	</bean>
 	<bean id="queryResultQueue" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="nh.virgo.order.orderQueryResult"/>
+		<constructor-arg value="nh.examples.springintegration.order.orderQueryResult"/>
 	</bean>
 
 	<!--  A Logging Channel for monitoring messages via the Log file -->
@@ -51,7 +51,7 @@
 	
 	
 	<!--  The message converter that converts JMS messages from XML to objects and vice versa -->
-	<bean id="messageConverter" class="nh.virgo.order.utils.XmlJmsMessageConverter" />
+	<bean id="messageConverter" class="nh.examples.springintegration.order.utils.XmlJmsMessageConverter" />
 	
 	<!--  The JMS outbound channel adapter that forwards the commands to the JMS queue -->
 	<int-jms:outbound-channel-adapter 
@@ -72,7 +72,7 @@
 	<int:gateway
 		id="commandBus" 
 		default-request-channel="commandBusChannel" 
-		service-interface="nh.virgo.order.framework.domain.commands.CommandBus"/>
+		service-interface="nh.examples.springintegration.order.framework.domain.commands.CommandBus"/>
 
 
 	<!--  =============================================================== -->
@@ -94,7 +94,7 @@
 	<int:gateway id="orderQueries"
 		default-request-channel="queryChannel"
 		default-reply-channel="queryResultChannel"
-		service-interface="nh.virgo.order.queries.OrderQueries" >
+		service-interface="nh.examples.springintegration.order.queries.OrderQueries" >
 	</int:gateway>
 
 	<int-jms:outbound-gateway id="queryGateway" 
@@ -123,7 +123,7 @@
    		</int:interceptors>
 	</int:channel>
 	
-	<bean id="clientEventListener" class="nh.virgo.order.client.swing.ClientEventListener" />
+	<bean id="clientEventListener" class="nh.examples.springintegration.order.client.ClientEventListener" />
 	
 	<int:service-activator id="clientEventListenerServiceActivator"
 		input-channel="eventChannel"

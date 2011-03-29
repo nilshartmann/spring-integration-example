@@ -15,7 +15,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 	<!--  Configure beans from domain Package -->
-	<context:component-scan base-package="nh.virgo.order.domain" />
+	<context:component-scan base-package="nh.examples.springintegration.order.domain" />
 
 	<!--  Enable Support for @Configurable -->	
 	<context:spring-configured />
@@ -24,7 +24,7 @@
 	<!--  A Logging Channel for monitoring messages via the Log file -->
 	<int:logging-channel-adapter id="logger" level="INFO" log-full-message="true"/>
 
-	<osgi:service ref="orderRepository" interface="nh.virgo.order.domain.OrderRepository"/>
+	<osgi:service ref="orderRepository" interface="nh.examples.springintegration.order.domain.OrderRepository"/>
 
 	<!--  =============================================================== -->
 	<!--  ==            C O M M A N D    P R O C E S S I N G              -->
@@ -47,14 +47,14 @@
 	<!--  ==                  E V E N T   H A N D L I N G                 -->
 	<!--  =============================================================== -->
 	<!-- The EventStore stores the Events and forwards them to the eventPublisher -->
-	<bean id="eventStore" class="nh.virgo.order.framework.eventstore.EventStore">
+	<bean id="eventStore" class="nh.examples.springintegration.order.framework.eventstore.EventStore">
 		<constructor-arg ref="eventPublisher" />
 	</bean>
 
 	<!-- The EventPublisher-Gateway that will push Events to the eventChannel -->
 	<int:gateway id="eventPublisher"
 		default-request-channel="eventChannelInternal" 
-		service-interface="nh.virgo.order.framework.eventstore.EventPublisher" 
+		service-interface="nh.examples.springintegration.order.framework.eventstore.EventPublisher" 
 	/>
 	
 	<!--  The public channel that contains the events published by the EventPublisher -->
@@ -79,7 +79,7 @@
 	<int:service-activator id="simpleEventActivator"
 		input-channel="eventChannel"
 		method="onEvent">
-		<bean id="simpleEventListener" class="nh.virgo.order.domain.SimpleEventListener" />
+		<bean id="simpleEventListener" class="nh.examples.springintegration.order.domain.SimpleEventListener" />
 	</int:service-activator>
 	
 	<!-- 

@@ -14,7 +14,10 @@ package nh.virgo.order.queries;
 import java.util.LinkedList;
 import java.util.List;
 
-import nh.virgo.order.utils.XStreamBasedXmlConverter;
+import nh.examples.springintegration.order.queries.LineItemDto;
+import nh.examples.springintegration.order.queries.OrderDto;
+import nh.examples.springintegration.order.queries.OrderQueries;
+import nh.examples.springintegration.order.utils.XStreamBasedXmlConverter;
 
 import org.springframework.stereotype.Component;
 

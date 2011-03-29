@@ -11,7 +11,7 @@ Import-Package: com.google.common.base;version="1.7.0",
  org.springframework.beans.factory.annotation,
  org.springframework.transaction.annotation,
  org.springframework.util
-Export-Package: nh.virgo.order.framework.domain,
- nh.virgo.order.framework.domain.commands,
- nh.virgo.order.framework.domain.events,
- nh.virgo.order.framework.eventstore
+Export-Package: nh.examples.springintegration.order.framework.domain,
+ nh.examples.springintegration.order.framework.domain.commands,
+ nh.examples.springintegration.order.framework.domain.events,
+ nh.examples.springintegration.order.framework.eventstore

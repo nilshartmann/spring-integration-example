@@ -7,9 +7,9 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.google.common.base;version="1.7.0",
  com.google.common.collect,
  javax.persistence;version="2.0.3",
- nh.virgo.order.domain,
- nh.virgo.order.domain.events,
- nh.virgo.order.framework.domain,
+ nh.examples.springintegration.order.domain,
+ nh.examples.springintegration.order.domain.events,
+ nh.examples.springintegration.order.framework.domain,
  org.osgi.framework;version="1.5.0",
  org.slf4j;version="1.5.6",
  org.springframework.mail.javamail;version="3.0.5.RELEASE"

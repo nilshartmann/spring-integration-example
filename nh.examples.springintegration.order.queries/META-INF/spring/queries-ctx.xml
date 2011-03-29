@@ -14,7 +14,7 @@
 		http://www.springframework.org/schema/p http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
-	<context:component-scan base-package="nh.virgo.order.queries" />
+	<context:component-scan base-package="nh.examples.springintegration.order.queries" />
 	
 	<context:load-time-weaver weaver-class="org.eclipse.equinox.weaving.springweaver.EquinoxAspectsLoadTimeWeaver" aspectj-weaving="on" />	
 
@@ -35,7 +35,7 @@
    		</int:interceptors>
 	</int:channel>
 
-	<osgi:reference id="orderRepository" interface="nh.virgo.order.domain.OrderRepository" />
+	<osgi:reference id="orderRepository" interface="nh.examples.springintegration.order.domain.OrderRepository" />
 
 	<int:service-activator id="queryServiceActivator"
 		input-channel="queryChannel"
@@ -57,15 +57,15 @@
 	/> 
 	
 		<bean id="queryQueue" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="nh.virgo.order.orderQueries"/>
+		<constructor-arg value="nh.examples.springintegration.order.orderQueries"/>
 	</bean>
 	<bean id="queryResultQueue" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="nh.virgo.order.orderQueryResult"/>
+		<constructor-arg value="nh.examples.springintegration.order.orderQueryResult"/>
 	</bean>
 		
 	
 	<!--  The message converter that converts JMS messages from XML to objects and vice versa -->
-	<bean id="messageConverter" class="nh.virgo.order.utils.XmlJmsMessageConverter" />
+	<bean id="messageConverter" class="nh.examples.springintegration.order.utils.XmlJmsMessageConverter" />
 	
 	<osgi:reference id="connectionFactory" interface="javax.jms.ConnectionFactory" />
 	
